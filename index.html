@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6757d9"><meta name="description" content="Learn useful German vocabulary with articles, Russian and English translations.">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg"><link rel="stylesheet" href="styles.css">
+<title>DeutschWort — German vocabulary</title>
+</head>
+<body>
+<header><div class="brand"><span class="brandmark">Aa</span><div><b>DeutschWort</b><small>German, one word at a time</small></div></div><button id="installBtn" class="install hidden">Install app</button></header>
+<main>
+<section class="hero"><div><p class="eyebrow">YOUR DAILY GERMAN</p><h1>Build your<br><span>Wortschatz.</span></h1><p class="sub">2,500 high-frequency German words, with Russian and English meanings, noun articles and plurals.</p></div><div class="hero-art">🌈<span>🇩🇪</span></div></section>
+<section class="stats">
+ <div><strong id="learned">0</strong><span>Mastered</span></div><div><strong id="due">0</strong><span>To review</span></div><div><strong id="accuracy">—</strong><span>Accuracy</span></div><div><strong id="streak">0</strong><span>Day streak</span></div>
+</section>
+<section class="progress-card"><div class="line"><b>Your collection</b><span id="countLabel">0 / 2,500</span></div><div class="bar"><i id="progressBar"></i></div><small id="progressHint">Frequency-ordered vocabulary · spaced repetition · progress saved on this device.</small></section>
+<section class="daily-card"><div class="line"><b>Daily learning goal</b><label>Target <select id="dailyGoalSelect"><option>10</option><option selected>20</option><option>30</option><option>40</option></select></label></div><div class="bar"><i id="dailyGoalBar"></i></div><small id="dailyGoalLabel">0 / 20 words today</small></section>
+<section class="panel">
+ <div class="line"><div><p class="eyebrow">PICK A PRACTICE MODE</p><h2>How do you want to learn?</h2></div><span class="spark">✦</span></div>
+ <div class="modes">
+  <button class="mode active" data-mode="ru-de"><span>🇷🇺 → 🇩🇪</span><b>Russian to German</b><small>Write the German word + article</small></button>
+  <button class="mode" data-mode="en-de"><span>🇬🇧 → 🇩🇪</span><b>English to German</b><small>Write the German word + article</small></button>
+  <button class="mode" data-mode="de-ru"><span>🇩🇪 → 🇷🇺</span><b>German to Russian</b><small>Translate into Russian</small></button>
+  <button class="mode" data-mode="de-en"><span>🇩🇪 → 🇬🇧</span><b>German to English</b><small>Translate into English</small></button>
+ </div>
+ <div class="session-row"><label>Words per session <select id="sessionSize"><option>10</option><option>15</option><option>20</option><option>30</option></select></label><label>Starting point <select id="startAt"><option value="0">Top 500 · most frequent</option><option value="500">Words 501–1,000</option><option value="1000">Words 1,001–1,500</option><option value="1500">Words 1,501–2,000</option><option value="2000">Words 2,001–2,500</option></select></label></div>
+ <button id="startBtn" class="primary">Start learning <span>→</span></button>
+</section>
+<section id="study" class="panel study hidden">
+ <div class="line"><span class="eyebrow" id="modeLabel">RUSSIAN → GERMAN</span><span id="sessionCount" class="count">1 / 10</span></div>
+ <div class="bar"><i id="sessionBar"></i></div>
+ <div class="prompt-card"><div id="visual" class="visual">📚</div><div id="prompt" class="prompt">человек</div><div id="hint" class="hint">Noun · include the article</div></div>
+ <label class="answer-label" for="answer">YOUR ANSWER</label><input id="answer" autocomplete="off" autocapitalize="off" placeholder="Type your answer…">
+ <div id="feedback" class="feedback"></div>
+ <button id="checkBtn" class="primary">Check answer</button><button id="nextBtn" class="secondary hidden">Continue →</button>
+ <button id="exitBtn" class="quiet">End session</button>
+</section>
+<section class="panel">
+ <div class="line"><div><p class="eyebrow">YOUR LEARNING PATH</p><h2>Word library</h2></div><span class="count" id="libraryCount">2,500 entries</span></div>
+ <input id="search" class="search" placeholder="Search German, Russian or English…">
+ <div id="library" class="library"></div>
+</section>
+<section class="panel"><p class="eyebrow">HOW THE WORDS ARE VERIFIED</p><h2>Quality over quantity</h2><p class="bodycopy">The 2,500-entry set is selected from the Grundwortschatz multi-corpus dataset using frequency ranks and everyday word types. Russian meanings are matched from FreeDict German–Russian (Wiktionary/DBnary). Noun articles and plurals come from the vocabulary dataset; entries are not all independently human-proofread, so this is a carefully filtered learning list rather than a certified dictionary. Open each word’s DWDS reference from the vocabulary data when you want to check a nuance.</p><div class="sources"><a href="https://huggingface.co/datasets/cstr/grundwortschatz-voc-de" target="_blank" rel="noreferrer">Grundwortschatz dataset ↗</a><a href="https://freedict.org/" target="_blank" rel="noreferrer">FreeDict ↗</a><a href="https://www.dwds.de/" target="_blank" rel="noreferrer">DWDS ↗</a><a href="https://www.duden.de/woerterbuch" target="_blank" rel="noreferrer">Duden ↗</a></div></section>
+<footer>DeutschWort · Progress is saved on this device.</footer>
+</main><script src="words.js"></script><script src="app.js"></script></body></html>
