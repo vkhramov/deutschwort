@@ -10,7 +10,7 @@
 <body>
 <header><div class="brand"><span class="brandmark">Aa</span><div><b>DeutschWort</b><small>German, one word at a time</small></div></div><button id="installBtn" class="install hidden">Install app</button></header>
 <main>
-<section class="hero"><div><p class="eyebrow">YOUR DAILY GERMAN</p><h1>Build your<br><span>Wortschatz.</span></h1><p class="sub">2,500 high-frequency German words, with Russian and English meanings, noun articles and plurals.</p></div><div class="hero-art">🌈<span>🇩🇪</span></div></section>
+<section class="hero"><div><p class="eyebrow">YOUR DAILY GERMAN</p><h1>Build your<br><span>Wortschatz.</span></h1><p class="sub">2,500 everyday German words, with Russian and English meanings, illustrated nouns and verbs, grammar notes and conjugations.</p></div><div class="hero-art"><img src="assets/illus/03.webp" alt="Illustration of a family learning German"></div></section>
 <section class="stats">
  <div><strong id="learned">0</strong><span>Mastered</span></div><div><strong id="due">0</strong><span>To review</span></div><div><strong id="accuracy">—</strong><span>Accuracy</span></div><div><strong id="streak">0</strong><span>Day streak</span></div>
 </section>
@@ -30,7 +30,7 @@
 <section id="study" class="panel study hidden">
  <div class="line"><span class="eyebrow" id="modeLabel">RUSSIAN → GERMAN</span><span id="sessionCount" class="count">1 / 10</span></div>
  <div class="bar"><i id="sessionBar"></i></div>
- <div class="prompt-card"><div id="visual" class="visual">📚</div><div id="prompt" class="prompt">человек</div><div id="hint" class="hint">Noun · include the article</div></div>
+ <div class="prompt-card"><div id="visual" class="visual"></div><div id="prompt" class="prompt">человек</div><div id="hint" class="hint">Noun · include the article</div><div id="wordExtra" class="word-extra"></div></div>
  <label class="answer-label" for="answer">YOUR ANSWER</label><input id="answer" autocomplete="off" autocapitalize="off" placeholder="Type your answer…">
  <div id="feedback" class="feedback"></div>
  <button id="checkBtn" class="primary">Check answer</button><button id="nextBtn" class="secondary hidden">Continue →</button>
@@ -41,6 +41,6 @@
  <input id="search" class="search" placeholder="Search German, Russian or English…">
  <div id="library" class="library"></div>
 </section>
-<section class="panel"><p class="eyebrow">HOW THE WORDS ARE VERIFIED</p><h2>Quality over quantity</h2><p class="bodycopy">The 2,500-entry set is selected from the Grundwortschatz multi-corpus dataset using frequency ranks and everyday word types. Russian meanings are matched from FreeDict German–Russian (Wiktionary/DBnary). Noun articles and plurals come from the vocabulary dataset; entries are not all independently human-proofread, so this is a carefully filtered learning list rather than a certified dictionary. Open each word’s DWDS reference from the vocabulary data when you want to check a nuance.</p><div class="sources"><a href="https://huggingface.co/datasets/cstr/grundwortschatz-voc-de" target="_blank" rel="noreferrer">Grundwortschatz dataset ↗</a><a href="https://freedict.org/" target="_blank" rel="noreferrer">FreeDict ↗</a><a href="https://www.dwds.de/" target="_blank" rel="noreferrer">DWDS ↗</a><a href="https://www.duden.de/woerterbuch" target="_blank" rel="noreferrer">Duden ↗</a></div></section>
+<section class="panel"><p class="eyebrow">HOW THE WORDS ARE VERIFIED</p><h2>Quality over quantity</h2><p class="bodycopy">The 2,500-entry set is selected from the Grundwortschatz multi-corpus dataset using frequency ranks and everyday word types. Russian meanings are matched from FreeDict German–Russian (Wiktionary/DBnary). Noun articles and plurals come from the vocabulary dataset. Verb cards use infinitives and show all six present-tense forms; preposition cards explain the governing case with examples. Grammar notes are based on Goethe-Institut and Deutsche Welle references. Entries are not all independently human-proofread, so this is a carefully filtered learning list rather than a certified dictionary. Open each word’s DWDS reference to check nuanced senses.</p><div class="sources"><a href="https://huggingface.co/datasets/cstr/grundwortschatz-voc-de" target="_blank" rel="noreferrer">Grundwortschatz dataset ↗</a><a href="https://freedict.org/" target="_blank" rel="noreferrer">FreeDict ↗</a><a href="https://www.dwds.de/" target="_blank" rel="noreferrer">DWDS ↗</a><a href="https://www.duden.de/woerterbuch" target="_blank" rel="noreferrer">Duden ↗</a><a href="https://www.goethe.de/ins/de/de/m/prf/grm.html" target="_blank" rel="noreferrer">Goethe grammar ↗</a><a href="https://www.dw.com/downloads/57339615/grammarenglishepisode038.pdf" target="_blank" rel="noreferrer">Deutsche Welle grammar ↗</a></div></section>
 <footer>DeutschWort · Progress is saved on this device.</footer>
 </main><script src="words.js"></script><script src="app.js"></script></body></html>

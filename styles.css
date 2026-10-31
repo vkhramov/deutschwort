@@ -6,3 +6,23 @@
 .wordsource{display:inline-block;margin-top:5px;color:#6757d9;font-size:11px;text-decoration:none;font-weight:700}.wordsource:hover{text-decoration:underline}
 
 .daily-card{background:#fff;border:1px solid #eeeafc;border-radius:18px;padding:16px 18px;margin:12px 0 24px}.daily-card .line{display:flex;align-items:center;justify-content:space-between;gap:12px}.daily-card label{font-size:12px;color:#6d6982}.daily-card select{margin-left:5px;border:1px solid #e5e1f3;border-radius:9px;padding:6px;background:#fff;color:#403a58}.daily-card small{display:block;margin-top:8px;color:#77718c;font-size:12px}
+
+/* Meaning-based illustration artwork */
+.hero-art{width:150px;height:150px;flex:0 0 150px;transform:rotate(2deg);filter:drop-shadow(0 8px 10px #7669a522)}
+.hero-art img{width:100%;height:100%;object-fit:cover;border-radius:24px;border:5px solid #ffffffaa}
+.visual{display:flex;justify-content:center;align-items:center;min-height:0;margin:0 auto 12px}
+.visual img{width:142px;height:142px;object-fit:cover;border-radius:22px;box-shadow:0 8px 22px #6757d922}
+.visual.no-visual{display:none}
+.wordicon{width:54px;height:54px;display:block;overflow:hidden;border-radius:13px;background:#f5f2ff;flex:0 0 54px}
+.wordicon img{width:100%;height:100%;object-fit:cover;display:block}
+.word-extra{margin:16px auto 0;max-width:480px;text-align:left}
+.grammar-box{border:1px solid #e9e4ff;background:#ffffffc9;border-radius:14px;padding:12px 13px}
+.grammar-title{font-size:11px;font-weight:800;color:#6757d9;letter-spacing:.35px;margin-bottom:9px}
+.conjugation-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.conjugation-cell{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#f7f5ff;border-radius:9px;padding:8px 9px;min-width:0}
+.conjugation-cell span{font-size:10px;color:#77758c}
+.conjugation-cell b{font-size:12px;color:#25233b;text-align:right;overflow-wrap:anywhere}
+.grammar-note{font-size:10px;line-height:1.5;color:#77758c;margin:9px 0 0}
+.grammar-example{font-size:11px;line-height:1.55;color:#38344f;margin:8px 0 0;padding-top:8px;border-top:1px solid #eeeaf8}
+.wordrow .wordmain{flex:1}
+@media(max-width:480px){.hero-art{width:112px;height:112px;flex-basis:112px}.visual img{width:124px;height:124px}.conjugation-cell{padding:7px}.conjugation-cell b{font-size:11px}}

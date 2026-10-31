@@ -1,28 +1,45 @@
 const $=id=>document.getElementById(id);
-const state=JSON.parse(localStorage.getItem('dw-state')||'{"known":{},"stats":{"right":0,"wrong":0},"streak":0,"lastDay":""}');
+const state=JSON.parse(localStorage.getItem('dw-state-v3')||'{"known":{},"stats":{"right":0,"wrong":0},"streak":0,"lastDay":""}');
 let mode='ru-de',queue=[],pos=0,current=null,checked=false,deferredPrompt=null;
 state.daily=state.daily||{date:new Date().toISOString().slice(0,10),count:0,target:20};
 if(state.daily.date!==new Date().toISOString().slice(0,10))state.daily={date:new Date().toISOString().slice(0,10),count:0,target:state.daily.target||20};
-const save=()=>{localStorage.setItem('dw-state',JSON.stringify(state));renderStats()};
+const save=()=>{localStorage.setItem('dw-state-v3',JSON.stringify(state));renderStats()};
 function renderStats(){
  let known=Object.keys(state.known).filter(k=>state.known[k].box>=4).length;
  $('learned').textContent=known;
  $('due').textContent=Object.keys(state.known).filter(k=>state.known[k].due<=Date.now()&&state.known[k].box>0).length;
  $('accuracy').textContent=(state.stats.right+state.stats.wrong)?Math.round(state.stats.right/(state.stats.right+state.stats.wrong)*100)+'%':'—';
  $('streak').textContent=state.streak||0;
- $('countLabel').textContent=`${known} / 2,500`;
- $('progressBar').style.width=(known/2500*100)+'%';
+ $('countLabel').textContent=`${known} / ${WORDS.length.toLocaleString()}`;
+ $('progressBar').style.width=(known/WORDS.length*100)+'%';
  $('progressHint').textContent=`${WORDS.length.toLocaleString()} entries · frequency-ordered learning path`;
  $('dailyGoalLabel').textContent=`${state.daily.count} / ${state.daily.target} words today`;
  $('dailyGoalBar').style.width=Math.min(100,state.daily.count/state.daily.target*100)+'%';
 }
-function typeLabel(t){return ({noun:'Noun · type the article and noun',verb:'Verb · infinitive',adjective:'Adjective',adverb:'Adverb',pronoun:'Pronoun',preposition:'Preposition',conjunction:'Conjunction',article:'Article',number:'Number'})[t]||t}
+function typeLabel(t){return ({noun:'Noun · article + plural',verb:'Verb · infinitive + present tense',adjective:'Adjective',adverb:'Adverb',pronoun:'Pronoun',preposition:'Preposition · grammatical case',conjunction:'Conjunction',article:'Article',number:'Number'})[t]||t}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function illustration(w,cls='wordicon'){
+ return w.illustration?`<div class="${cls}"><img loading="lazy" src="assets/illus/${esc(w.illustration)}.webp" alt="Illustration for ${esc(w.de)}"></div>`:'';
+}
 function renderLibrary(q=''){
  let list=WORDS.filter(w=>(w.de+' '+w.ru+' '+w.en).toLowerCase().includes(q.toLowerCase())).slice(0,100);
  $('libraryCount').textContent=WORDS.length.toLocaleString()+' entries';
- $('library').innerHTML=list.map(w=>`<div class="wordrow"><div class="wordicon">${w.visual}</div><div class="wordmain"><b>${esc(w.de)}</b><small>${esc(w.ru)} · ${esc(w.en)}${w.plural?' · Pl. '+esc(w.plural):''}</small><a class="wordsource" href="${esc(w.sourceUrl)}" target="_blank" rel="noreferrer">DWDS reference ↗</a></div><span class="wordrank">#${w.rank}</span></div>`).join('')||'<p class="bodycopy">No matches.</p>';
+ $('library').innerHTML=list.map(w=>{
+  let detail=w.type==='noun'?(w.plural?'Plural: '+w.plural:'Noun'):
+   w.type==='verb'?'Verb · infinitive'+(w.conjugation?.length?' · ich '+w.conjugation[0].form+', du '+w.conjugation[1].form:''):
+   w.type==='preposition'?(w.caseLabel||w.case||'Preposition'):typeLabel(w.type);
+  return `<div class="wordrow">${illustration(w)}<div class="wordmain"><b>${esc(w.de)}</b><small>${esc(w.ru)} · ${esc(w.en)}${detail?' · '+esc(detail):''}</small><a class="wordsource" href="${esc(w.sourceUrl)}" target="_blank" rel="noreferrer">DWDS reference ↗</a></div><span class="wordrank">#${w.rank}</span></div>`;
+ }).join('')||'<p class="bodycopy">No matches.</p>';
 }
-function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function wordExtra(w){
+ if(w.type==='verb'&&Array.isArray(w.conjugation)){
+  return `<div class="grammar-box"><div class="grammar-title">Present tense · Präsens</div><div class="conjugation-grid">${w.conjugation.map(x=>`<div class="conjugation-cell"><span>${esc(x.pronoun)}</span><b>${esc(x.form)}</b></div>`).join('')}</div><p class="grammar-note">The infinitive is the main vocabulary form. The table shows the six present-tense forms.</p></div>`;
+ }
+ if(w.type==='preposition'&&w.case){
+  return `<div class="grammar-box"><div class="grammar-title">${esc(w.caseLabel||w.case)}</div><p class="grammar-note">${esc(w.caseNote||'')}</p><p class="grammar-example">${esc(w.caseExample||'')}</p></div>`;
+ }
+ return '';
+}
 document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.mode;
 });
@@ -37,7 +54,7 @@ $('startBtn').onclick=()=>{
 };
 function showCard(){
  if(pos>=queue.length){
-  $('prompt').textContent='Session complete!';$('visual').textContent='🎉';$('hint').textContent='Great work. Your progress has been saved.';
+  $('prompt').textContent='Session complete!';$('visual').innerHTML='';$('wordExtra').innerHTML='';$('hint').textContent='Great work. Your progress has been saved.';
   $('answer').classList.add('hidden');$('checkBtn').classList.add('hidden');$('nextBtn').classList.add('hidden');
   $('feedback').textContent=`You reviewed ${queue.length} entries.`;$('sessionBar').style.width='100%';return;
  }
@@ -45,13 +62,17 @@ function showCard(){
  $('checkBtn').classList.remove('hidden');$('nextBtn').classList.add('hidden');$('sessionCount').textContent=`${pos+1} / ${queue.length}`;
  $('sessionBar').style.width=(pos/queue.length*100)+'%';
  const prompts={'ru-de':current.ru,'en-de':current.en,'de-ru':current.de,'de-en':current.de};
- $('prompt').textContent=prompts[mode];$('visual').textContent=current.visual;
+ $('prompt').textContent=prompts[mode];
+ $('visual').innerHTML=current.illustration?`<img src="assets/illus/${esc(current.illustration)}.webp" alt="Illustration for ${esc(current.de)}">`:'';
+ $('visual').classList.toggle('no-visual',!current.illustration);
  let extra=typeLabel(current.type);
- if(current.plural)extra+=' · plural: '+current.plural;
+ if(current.type==='noun'&&current.plural)extra+=' · plural: '+current.plural;
+ if(current.type==='preposition'&&current.caseLabel)extra+=' · '+current.caseLabel;
  if(current.example)extra+=' · '+current.example;
  $('hint').textContent=mode.endsWith('-de')?extra:'Translate the German word or expression'+(current.example?' · '+current.example:'');
+ $('wordExtra').innerHTML=wordExtra(current);
  $('modeLabel').textContent=({'ru-de':'RUSSIAN → GERMAN','en-de':'ENGLISH → GERMAN','de-ru':'GERMAN → RUSSIAN','de-en':'GERMAN → ENGLISH'})[mode];
- $('answer').placeholder=mode.endsWith('-de')&&current.type==='noun'?'Type article + noun (e.g. der Tisch)…':'Type your answer…';
+ $('answer').placeholder=mode.endsWith('-de')&&current.type==='noun'?'Type article + noun (e.g. der Tisch)…':mode.endsWith('-de')&&current.type==='verb'?'Type the infinitive (e.g. gehen)…':'Type your answer…';
  $('answer').focus();
 }
 function norm(s){return s.toLowerCase().trim().replace(/[.,!?;:]/g,'').replace(/\s+/g,' ')}
