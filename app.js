@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id);
-const STATE_KEY='dw-state-v7';
-const oldState=JSON.parse(localStorage.getItem(STATE_KEY)||localStorage.getItem('dw-state-v6')||localStorage.getItem('dw-state-v5')||localStorage.getItem('dw-state-v4')||localStorage.getItem('dw-state-v3')||'{"known":{},"stats":{"right":0,"wrong":0},"streak":0,"lastDay":""}');
+const STATE_KEY='dw-state-v9';
+const oldState=JSON.parse(localStorage.getItem(STATE_KEY)||localStorage.getItem('dw-state-v8')||localStorage.getItem('dw-state-v7')||localStorage.getItem('dw-state-v6')||localStorage.getItem('dw-state-v5')||localStorage.getItem('dw-state-v4')||localStorage.getItem('dw-state-v3')||'{"known":{},"stats":{"right":0,"wrong":0},"streak":0,"lastDay":""}');
 const state=oldState;
 state.known=state.known||{};state.alreadyKnown=state.alreadyKnown||{};state.stats=state.stats||{right:0,wrong:0};
 let mode='ru-de',queue=[],pos=0,current=null,checked=false,deferredPrompt=null;

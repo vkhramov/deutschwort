@@ -1,0 +1,11 @@
+DeutschWort v8 — vocabulary example quality update
+
+This release replaces a set of source-derived examples that were fragments, archaic, editorially annotated, misleading, or poor demonstrations of the target item. All 35 preposition entries were rewritten with clear contemporary sentences; translations were rewritten to match the German example. Additional high-risk examples and known translation issues were corrected.
+
+Automated validation performed on all 2,500 entries:
+- unique IDs and exact count
+- non-empty German, English and Russian example fields
+- JSON syntax and app data structure
+- cache version bumped and progress migration retained
+
+Important limitation: automated checks cannot certify every nuance of 2,500 translations. This is a targeted quality pass, not a claim of independent human proofreading of every entry. Source references remain attached to vocabulary entries; newly written example sentences are editorial examples, not direct quotations from those sources.
