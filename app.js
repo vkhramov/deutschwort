@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id);
-const STATE_KEY='dw-state-v5';
-const oldState=JSON.parse(localStorage.getItem(STATE_KEY)||localStorage.getItem('dw-state-v4')||localStorage.getItem('dw-state-v3')||'{"known":{},"stats":{"right":0,"wrong":0},"streak":0,"lastDay":""}');
+const STATE_KEY='dw-state-v6';
+const oldState=JSON.parse(localStorage.getItem(STATE_KEY)||localStorage.getItem('dw-state-v5')||localStorage.getItem('dw-state-v4')||localStorage.getItem('dw-state-v3')||'{"known":{},"stats":{"right":0,"wrong":0},"streak":0,"lastDay":""}');
 const state=oldState;
 state.known=state.known||{};state.alreadyKnown=state.alreadyKnown||{};state.stats=state.stats||{right:0,wrong:0};
 let mode='ru-de',queue=[],pos=0,current=null,checked=false,deferredPrompt=null;
@@ -31,9 +31,11 @@ function renderLibrary(q=''){
   return `<div class="wordrow">${illustration(w)}<div class="wordmain"><b>${esc(w.de)} ${excluded?'<span class="known-tag">Already know</span>':''}</b><small>${esc(w.ru)} · ${esc(w.en)}${detail?' · '+esc(detail):''}</small><a class="wordsource" href="${esc(w.sourceUrl)}" target="_blank" rel="noreferrer">DWDS reference ↗</a></div><span class="wordrank">#${w.rank}</span></div>`;
  }).join('')||'<p class="bodycopy">No matches.</p>';
 }
-function wordExtra(w){
- if(w.type==='verb'&&Array.isArray(w.conjugation))return `<div class="grammar-box"><div class="grammar-title">Present tense · Präsens</div><div class="conjugation-grid">${w.conjugation.map(x=>`<div class="conjugation-cell"><span>${esc(x.pronoun)}</span><b>${esc(x.form)}</b></div>`).join('')}</div><p class="grammar-note">The infinitive is the main vocabulary form. The table shows the six present-tense forms.</p></div>`;
- if(w.type==='preposition'&&w.case)return `<div class="grammar-box"><div class="grammar-title">${esc(w.caseLabel||w.case)}</div><p class="grammar-note">${esc(w.caseNote||'')}</p><p class="grammar-example">${esc(w.caseExample||'')}</p></div>`;
+function wordExtra(w,reveal=false){
+ const translatingIntoGerman=mode==='ru-de'||mode==='en-de';
+ // Never expose German answer forms or German grammar examples before a translation-into-German answer.
+ if(w.type==='verb'&&Array.isArray(w.conjugation)){if(translatingIntoGerman&&!reveal)return '';return `<div class="grammar-box"><div class="grammar-title">Present tense · Präsens</div><div class="conjugation-grid">${w.conjugation.map(x=>`<div class="conjugation-cell"><span>${esc(x.pronoun)}</span><b>${esc(x.form)}</b></div>`).join('')}</div><p class="grammar-note">The infinitive is the main vocabulary form. The table shows the six present-tense forms.</p></div>`;}
+ if(w.type==='preposition'&&w.case){const example=(!translatingIntoGerman||reveal)&&w.caseExample?`<p class="grammar-example">${esc(w.caseExample)}</p>`:'';return `<div class="grammar-box"><div class="grammar-title">${esc(w.caseLabel||w.case)}</div><p class="grammar-note">${esc(w.caseNote||'')}</p>${example}</div>`;}
  return '';
 }
 document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>{document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.mode;});
@@ -78,9 +80,9 @@ function showCard(){
 function norm(s){return String(s||'').toLowerCase().trim().replace(/[.,!?;:]/g,'').replace(/\s+/g,' ')}
 function acceptable(input,expected){return String(expected||'').split(';').some(x=>norm(x)===norm(input))}
 function revealExample(){
- if((mode==='ru-de'||mode==='en-de')&&current.example){
-  const translated=mode==='ru-de'?current.exampleRu:current.exampleEn;
-  $('hint').textContent=typeLabel(current.type)+(translated?' · Example: '+translated:'')+' · German: '+current.example;
+ if(mode==='ru-de'||mode==='en-de'){
+  if(current.example){const translated=mode==='ru-de'?current.exampleRu:current.exampleEn;$('hint').textContent=typeLabel(current.type)+(translated?' · Example: '+translated:'')+' · German: '+current.example;}
+  $('wordExtra').innerHTML=wordExtra(current,true);
  }
 }
 $('checkBtn').onclick=()=>{
