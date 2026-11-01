@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id);
-const STATE_KEY='dw-state-v6';
-const oldState=JSON.parse(localStorage.getItem(STATE_KEY)||localStorage.getItem('dw-state-v5')||localStorage.getItem('dw-state-v4')||localStorage.getItem('dw-state-v3')||'{"known":{},"stats":{"right":0,"wrong":0},"streak":0,"lastDay":""}');
+const STATE_KEY='dw-state-v7';
+const oldState=JSON.parse(localStorage.getItem(STATE_KEY)||localStorage.getItem('dw-state-v6')||localStorage.getItem('dw-state-v5')||localStorage.getItem('dw-state-v4')||localStorage.getItem('dw-state-v3')||'{"known":{},"stats":{"right":0,"wrong":0},"streak":0,"lastDay":""}');
 const state=oldState;
 state.known=state.known||{};state.alreadyKnown=state.alreadyKnown||{};state.stats=state.stats||{right:0,wrong:0};
 let mode='ru-de',queue=[],pos=0,current=null,checked=false,deferredPrompt=null;
@@ -60,36 +60,44 @@ function buildSession(){
 }
 $('startBtn').onclick=()=>{queue=buildSession();pos=0;save();$('study').classList.remove('hidden');$('study').scrollIntoView({behavior:'smooth'});showCard();};
 function showCard(){
- if(pos>=queue.length){$('prompt').textContent='Session complete!';$('visual').innerHTML='';$('wordExtra').innerHTML='';$('hint').textContent='Great work. Your progress has been saved.';$('answer').classList.add('hidden');$('checkBtn').classList.add('hidden');$('knowBtn').classList.add('hidden');$('nextBtn').classList.add('hidden');$('feedback').textContent=`You reviewed ${queue.length} entries. Start another session to review due words and continue with new vocabulary.`;$('sessionBar').style.width='100%';return;}
+ if(pos>=queue.length){$('prompt').textContent='Session complete!';$('visual').innerHTML='';$('wordExtra').innerHTML='';$('exampleBox').innerHTML='';$('exampleBox').classList.add('hidden');$('hint').textContent='Great work. Your progress has been saved.';$('answer').classList.add('hidden');$('checkBtn').classList.add('hidden');$('knowBtn').classList.add('hidden');$('nextBtn').classList.add('hidden');$('feedback').textContent=`You reviewed ${queue.length} entries. Start another session to review due words and continue with new vocabulary.`;$('sessionBar').style.width='100%';return;}
  current=queue[pos];checked=false;$('answer').classList.remove('hidden');$('answer').value='';$('feedback').textContent='';$('feedback').className='feedback';$('checkBtn').classList.remove('hidden');$('knowBtn').classList.remove('hidden');$('nextBtn').classList.add('hidden');$('sessionCount').textContent=`${pos+1} / ${queue.length}`;$('sessionBar').style.width=(pos/queue.length*100)+'%';
  const prompts={'ru-de':current.ru,'en-de':current.en,'de-ru':current.de,'de-en':current.de};$('prompt').textContent=prompts[mode];
  $('visual').innerHTML=current.illustration?`<img src="assets/illus/${esc(current.illustration)}.webp" alt="Illustration for ${esc(current.de)}">`:'';$('visual').classList.toggle('no-visual',!current.illustration);
  let extra=typeLabel(current.type);if(current.type==='noun'&&current.plural)extra+=' · plural: '+current.plural;if(current.type==='preposition'&&current.caseLabel)extra+=' · '+current.caseLabel;
  const translatingIntoGerman=mode==='ru-de'||mode==='en-de';
- // In translation-into-German modes, show only the target-language example until the answer is checked.
- if(!translatingIntoGerman&&current.example)extra+=' · '+current.example;
- if(translatingIntoGerman){
-  const translated=mode==='ru-de'?current.exampleRu:current.exampleEn;
-  $('hint').textContent=extra+(translated?' · Example: '+translated:' · Example translation unavailable');
- }else{
-  $('hint').textContent='Translate the German word or expression'+(current.example?' · '+current.example:'');
- }
+ $('hint').textContent=translatingIntoGerman?extra:'Translate the German word or expression';
+ renderExample(false);
  $('wordExtra').innerHTML=wordExtra(current);$('modeLabel').textContent=({'ru-de':'RUSSIAN → GERMAN','en-de':'ENGLISH → GERMAN','de-ru':'GERMAN → RUSSIAN','de-en':'GERMAN → ENGLISH'})[mode];
  $('answer').placeholder=translatingIntoGerman&&current.type==='noun'?'Type article + noun (e.g. der Tisch)…':translatingIntoGerman&&current.type==='verb'?'Type the infinitive (e.g. gehen)…':'Type your answer…';$('answer').focus();
 }
 function norm(s){return String(s||'').toLowerCase().trim().replace(/[.,!?;:]/g,'').replace(/\s+/g,' ')}
 function acceptable(input,expected){return String(expected||'').split(';').some(x=>norm(x)===norm(input))}
-function revealExample(){
- if(mode==='ru-de'||mode==='en-de'){
-  if(current.example){const translated=mode==='ru-de'?current.exampleRu:current.exampleEn;$('hint').textContent=typeLabel(current.type)+(translated?' · Example: '+translated:'')+' · German: '+current.example;}
-  $('wordExtra').innerHTML=wordExtra(current,true);
+function renderExample(revealed){
+ const box=$('exampleBox');
+ const intoGerman=mode==='ru-de'||mode==='en-de';
+ const language=mode==='ru-de'||mode==='de-ru'?'Russian':'English';
+ const translated=language==='Russian'?current.exampleRu:current.exampleEn;
+ const lines=[];
+ if(intoGerman){
+  if(translated)lines.push(`<div class="example-line"><span>${language} example</span><p>${esc(translated)}</p></div>`);
+  else lines.push(`<div class="example-line"><span>${language} example</span><p class="example-missing">Example translation unavailable</p></div>`);
+  if(revealed&&current.example)lines.push(`<div class="example-line example-revealed"><span>German · revealed</span><p>${esc(current.example)}</p></div>`);
+ }else{
+  if(current.example)lines.push(`<div class="example-line"><span>German example</span><p>${esc(current.example)}</p></div>`);
+  if(revealed&&translated)lines.push(`<div class="example-line example-revealed"><span>${language} translation</span><p>${esc(translated)}</p></div>`);
  }
+ box.innerHTML=lines.join('');box.classList.toggle('hidden',!lines.length);
+}
+function revealExample(){
+ renderExample(true);
+ if(mode==='ru-de'||mode==='en-de')$('wordExtra').innerHTML=wordExtra(current,true);
 }
 $('checkBtn').onclick=()=>{
  if(checked)return;const ans=$('answer').value;const expected=mode==='ru-de'||mode==='en-de'?current.de:mode==='de-ru'?current.ru:current.en;const ok=acceptable(ans,expected);checked=true;state.daily.count++;
  let rec=state.known[current.id]||{box:0,due:0,reps:0,interval:0,ease:2.5};rec.reps=rec.reps||0;rec.ease=rec.ease||2.5;rec.interval=rec.interval||0;
- if(ok){state.stats.right++;rec.reps++;rec.ease=Math.min(2.8,rec.ease+.05);rec.interval=rec.reps===1?1:rec.reps===2?3:Math.max(rec.interval+1,Math.round(rec.interval*rec.ease));rec.box=Math.min(5,rec.reps);rec.due=Date.now()+rec.interval*86400000;$('feedback').className='feedback good';$('feedback').textContent='✓ Correct! '+current.de+' — '+current.ru+' / '+current.en+(current.plural?' · plural: '+current.plural:'');}
- else{state.stats.wrong++;rec.reps=0;rec.interval=0;rec.ease=Math.max(1.3,rec.ease-.2);rec.box=0;rec.due=Date.now()+10*60000;$('feedback').className='feedback bad';$('feedback').textContent='Not quite. Correct answer: '+expected+' · '+current.de+(current.plural?' · plural: '+current.plural:'');}
+ if(ok){state.stats.right++;rec.reps++;rec.ease=Math.min(2.8,rec.ease+.05);rec.interval=rec.reps===1?1:rec.reps===2?3:Math.max(rec.interval+1,Math.round(rec.interval*rec.ease));rec.box=Math.min(5,rec.reps);rec.due=Date.now()+rec.interval*86400000;$('feedback').className='feedback good';const paired=mode==='ru-de'?current.ru:mode==='en-de'?current.en:mode==='de-ru'?current.ru:current.en;$('feedback').textContent='✓ Correct! '+current.de+' — '+paired+(current.plural?' · plural: '+current.plural:'');}
+ else{state.stats.wrong++;rec.reps=0;rec.interval=0;rec.ease=Math.max(1.3,rec.ease-.2);rec.box=0;rec.due=Date.now()+10*60000;$('feedback').className='feedback bad';const correction=mode==='ru-de'||mode==='en-de'?current.de:expected;$('feedback').textContent='Not quite. Correct answer: '+correction+(current.plural?' · plural: '+current.plural:'');}
  state.known[current.id]=rec;save();revealExample();$('checkBtn').classList.add('hidden');$('knowBtn').classList.add('hidden');$('nextBtn').classList.remove('hidden');$('nextBtn').focus();
 };
 $('answer').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(checked)$('nextBtn').click();else $('checkBtn').click();}});
