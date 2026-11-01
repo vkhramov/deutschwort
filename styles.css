@@ -26,3 +26,5 @@
 .grammar-example{font-size:11px;line-height:1.55;color:#38344f;margin:8px 0 0;padding-top:8px;border-top:1px solid #eeeaf8}
 .wordrow .wordmain{flex:1}
 @media(max-width:480px){.hero-art{width:112px;height:112px;flex-basis:112px}.visual img{width:124px;height:124px}.conjugation-cell{padding:7px}.conjugation-cell b{font-size:11px}}
+
+.known-btn{width:100%;border:1px solid #d9d5e8;border-radius:12px;background:#fff;color:#625d78;padding:11px;font-size:12px;font-weight:700;margin-top:8px}.known-btn:hover{background:#f5f3ff;border-color:#bdb4f2}.known-tag{display:inline-block;margin-left:5px;padding:3px 6px;border-radius:6px;background:#e1f6e9;color:#17683c;font-size:9px;font-weight:700}

@@ -98,3 +98,6 @@ The app's original source code is GPL-3.0-or-later (see LICENSE-GPL-3.0.txt).
 The included source datasets retain their respective upstream licenses:
 Grundwortschatz GPL-3.0-or-later; FreeDict German-Russian CC BY-SA 3.0.
 Do not remove the FreeDict attribution/copyright notice.
+
+
+Version 4 changes: hides German example sentences during Russian/English-to-German prompts; Enter submits the answer; adds an “I already know this word” exclusion; session selection now combines due reviews with fresh words and advances through the frequency list. Review intervals use a lightweight SM-2-inspired schedule.
